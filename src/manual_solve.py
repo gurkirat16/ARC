@@ -10,14 +10,106 @@ import re
 ### result. Name them according to the task ID as in the three
 ### examples below. Delete the three examples. The tasks you choose
 ### must be in the data/training directory, not data/evaluation.
-def solve_6a1e5592(x):
-    return x
 
-def solve_b2862040(x):
-    return x
+'''
+Difficulty : Hard
+ToDo: Add Comments and summary
+'''
+pattern = []
+def insert_pattern(a):
+    #print('Appending a ', a)
+    pattern.append(a)
 
-def solve_05269061(x):
-    return x
+def get_pattern(a):
+    for val in pattern :
+        matching = re.search(a,val)
+        if matching:
+            return val
+    return a
+
+def solve_0dfd9992(x):
+
+    x_sol = x.copy()
+    row, col = x_sol.shape
+
+    # Row wise scanning
+    for i in range(row):
+        blank = False
+        p = ''
+        for j in range(col):
+            if x_sol[i][j] == 0:
+                blank = True
+                break
+            p += str(x_sol[i][j]) + ' '
+            
+        # skip to new row
+        if blank:
+            continue
+        else:
+            insert_pattern(p)
+            
+    # Column wise scanning
+    for i in range(row):
+        blank = False
+        p = ''
+        for j in range(col):
+            if x_sol[j][i] == 0:
+                blank = True
+                break
+            p += str(x_sol[j][i]) + ' '
+            
+        if blank:
+            continue
+        else:
+            insert_pattern(p)
+
+    #Filling out missing part
+    for i in range(row):
+        blank = False
+        p = ''
+        for j in range(col):
+            if x_sol[i][j] ==  0:
+                blank = True
+                p += '.' + ' '
+                continue
+            p += str(x_sol[i][j]) + ' '
+        if blank:
+            received_pattern = get_pattern(p).split(' ')[0:-1]
+            #print(received_pattern)
+            x_sol[i] = received_pattern
+    return x_sol
+
+'''
+
+Difficulty : Easy
+ToDo : Replace if done 2nd Hard problem, Add comments and summary otherwise
+
+'''
+def sol_0d3d703e(x):
+    x_sol = x.copy()
+    color_map = {3: 4, 1: 5, 2: 6, 8: 9, 4: 3, 5: 1, 6: 2, 9: 8}
+    for k, v in color_map.items():
+        x_sol = np.where(x == k, v, x_sol)
+
+'''
+
+Difficulty : Hard
+ToDo : Try solving
+
+def solve_508bd3b6(x):
+
+    x_sol = x.copy()
+    rows, cols = np.where(x == 8)
+    zipped = list(zip(rows, cols))
+    blue_x1, blue_y1 = zipped[0]
+    blue_x2, blue_y2 = zipped[1]
+
+    print(zipped)
+
+    return x_sol
+    
+'''
+
 
 
 def main():
@@ -72,10 +164,11 @@ def test(taskID, solve, data):
     for x, y in zip(train_input, train_output):
         yhat = solve(x)
         show_result(x, y, yhat)
-    print("Test grids")
-    for x, y in zip(test_input, test_output):
-        yhat = solve(x)
-        show_result(x, y, yhat)
+        #break
+    # print("Test grids")
+    # for x, y in zip(test_input, test_output):
+    #     yhat = solve(x)
+    #     show_result(x, y, yhat)
 
         
 def show_result(x, y, yhat):
