@@ -126,10 +126,12 @@ of blue blocks and replaces all the black blocks within the indices by blue bloc
 
 ![img_1.png](img_1.png)
 
+
 ## Libraries used
 
 - Numpy
 - Regex
+
 
 ## Summary (Including few extra thoughts) 
 
