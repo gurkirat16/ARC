@@ -97,17 +97,16 @@ from "`data/training`" directory). The solutions are generic for same grid patte
 ### Task 1 `solve_c8cbb738` :
 
 Here, the program tries to find and store the patterns by scanning rows and columns. It tried to find the different
-pattern with different colors. Check the max distance between the single pattern for the best output grid 
-and finally creates those patterns
+pattern with different colors. Check the max distance between the single pattern for the best output grid and finally
+creates those patterns
 
 ![img_4.png](img_4.png)
 
 ### Task 2 `solve_9f236235` :
 
-The program tries to find and store the patterns by scanning rows and columns.
-It tries to find the best color pallet size and then iterate over the main data by taking the best shape as the window 
-size. For every window size it take the color pallet and stores them and Finally 
-we will flip that matrix and get the required output
+The program tries to find and store the patterns by scanning rows and columns. It tries to find the best color pallet
+size and then iterate over the main data by taking the best shape as the window size. For every window size it take the
+color pallet and stores them and Finally we will flip that matrix and get the required output
 
 ![img_3.png](img_3.png)
 
@@ -126,26 +125,30 @@ of blue blocks and replaces all the black blocks within the indices by blue bloc
 
 ![img_1.png](img_1.png)
 
-
 ## Libraries used
 
 - Numpy
 - Regex
 
+## Summary (Including few extra thoughts)
 
-## Summary (Including few extra thoughts) 
+We thought of doing this code using the Machine Learning/ Deep learning and genetic algorithm and the Author of that
+paper also suggests the same. ML/DL approaches try to understand the rules for the different patterns at once which can
+help solve all problems of ARC. Some Kaggle masters have got the accuracy of 20%-30% using these approaches. But in our
+case the task was to solve 3 individual problems and solving them using ML/DL approaches as compared to Rule-Based
+approach would be inefficient.
 
-We thought of doing this code using the Machine Learning/ Deep learning and genetic algorithm and the Author 
-of that paper also suggests the same. ML/DL approaches try to understand the rules for the different patterns 
-at once which can help solve all problems of ARC. Some Kaggle masters have got the accuracy of 20%-30% using 
-these approaches. But in our case the task was to solve 3 individual problems and solving them using ML/DL 
-approaches as compared to Rule-Based approach would be inefficient. 
+For all the individual grids solved manually, we have used Python libraries, such as Numpy (predominantly) and Regex.
+These libraries try to learn rules/patterns of individual grid and then give the solution of testing grids based on the
+learnings. Numpy has helped us a lot in the vertorization, searching , replacing etc where it contains important
+functions such as np.where, np.transpose, np.unique, np.flip , np.count_nonzero which help to make the task easier.
+Regex also helped in pattern searching and matching (re.search). Rest of the repository uses loops, branches and python
+datastructures such as lists, tuples, np arrays etc.
 
-For all the individual grids solved manually, we have used Python libraries, such as Numpy (predominantly) and Regex. 
-These libraries try to learn rules/patterns of individual grid and then give the solution of testing grids based 
-on the learnings. Numpy contains important functions such as np.where, np.transpose, np.unique, np.count_nonzero which help
-to make the task easier. Regex also helped in pattern searching and matching (re.search). Rest of the repository uses 
-loops, branches and python datastructures such as lists, tuples, np arrays etc.
+According to us, Rule based approach (bottom to top) and ML/DL approaches (top to bottom) can be combined to generate an
+effective solution for ARC problems.
 
-According to us, Rule based approach (bottom to top) and ML/DL approaches (top to bottom) can be combined to generate
-an effective solution for ARC problems.
+In our perspective, we think this is a good start to think how human actually think and approach to the problems like
+mentioned in the ARC. When we were solving those problems and saw any image for the first time, we as a human start
+augmenting the data accordingly and search for possible combination and thats' hwo we have solved. but to solve these
+using machine we need some combination of ML/DL and genetic algorithms.
