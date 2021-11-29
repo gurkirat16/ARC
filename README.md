@@ -64,3 +64,14 @@ When your output grid is ready, click the green "Submit!" button to check your a
 After you've obtained the correct answer for the current test input grid, you can switch to the next test input grid for the task using the "Next test input" button (if there is any available; most tasks only have one test input).
 
 When you're done with a task, use the "load task" button to open a new task.
+
+## Purpose of the Repository
+Purpose of this repository is to manually solve the ARC tasks using Python. We have used multiple approaches/libraries to solve 4 problems like Numpy, Regex etc. Problems are of difficulty level - Difficult and Medium to difficult (choosen from "`data/training`" directory). The solutions are generic for same grid patterns.
+
+### Task 3 `solve_0dfd9992` :
+Here, the program tries to find and store the patterns by scanning rows and columns. For all rows with missing blocks, it tries to match a pattern from accumulated patterns using Regex. Once it gets a match, it updates the row with the matching pattern. 
+![img.png](img.png)
+
+### Task 4 `solve_ded97339` :
+Here, the program gets all the rows containing 2 blue color blocks using Numpy. Then it gets the start and end indices of blue blocks and replaces all the black blocks within the indices by blue blocks.
+![img_1.png](img_1.png)
