@@ -74,4 +74,5 @@ Here, the program tries to find and store the patterns by scanning rows and colu
 
 ### Task 4 `solve_ded97339` :
 Here, the program gets all the rows containing 2 blue color blocks using Numpy. Then it gets the start and end indices of blue blocks and replaces all the black blocks within the indices by blue blocks.
+
 ![img_1.png](img_1.png)
