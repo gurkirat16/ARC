@@ -2,8 +2,8 @@
 
 """
 
-Student Names : Gurkirat Kaur
-Student IDs (respectively) : 21239534
+Student Names : Gurkirat Kaur, Anshul Verma
+Student IDs (respectively) : 21239534, 21235667
 
 Note : We are making Gurkirat's Repository as primary repository for submission but it contains commits
 from both Anshul and Gurkirat.
@@ -13,10 +13,11 @@ Link to Anshul's github Repo : https://github.com/multinucliated/ARC
 
 """
 
-import os, sys
 import json
-import numpy as np
+import os
 import re
+
+import numpy as np
 
 ### YOUR CODE HERE: write at least three functions which solve
 ### specific tasks by transforming the input x and returning the
@@ -24,11 +25,224 @@ import re
 ### examples below. Delete the three examples. The tasks you choose
 ### must be in the data/training directory, not data/evaluation.
 
+"""
+                                    TASK 1 :: c8cbb738 :: Hard Level Difficulty 
+
+When we've looked in to the picture, it seems like :
+1) We need to create the output grid of max distance which is present in the pattern Eg: Square, Plus sign , 2 types 
+of rectangle
+2) Once final output grid is initialized, we need to extract the each unique color pattern form the main data.
+3) Once those are extracted, we'll make the background color to zero (why zero? we'll see this 4th point)   
+4) When we'll hold the extracted data, we will sum all the pattern that we have extracted , its a simple matrix addition
+    as we have made the background zero, so it can be added without any extra numbers. 
+Additionally, there are few more condition , where I've added the padding for the rectangles accordingly     
+                                **********************************************
+                                *        Training Grids solved : All         *
+                                *         Testing Grids solved : All         *
+                                **********************************************
+"""
+
+
+def solve_c8cbb738(data):
+    """
+    This function will dp all the required calculation which we have just explained above
+
+    @param data : input numpy array grid values
+    return : output grid with the correct values
+    """
+    # getting the unique color with their total count in the input data
+    num, count = np.unique(data, return_counts=True)
+
+    # converting those values to list
+    num = list(num)
+    count = list(count)
+
+    # getting the max count from the count list
+    max_ = max(count)
+
+    # this loop will look for the max value index and break , i will hold the max value index position
+    i = 0
+    for _temp in count:
+        if max_ == _temp:
+            break
+        i += 1
+
+    # removing that index (basically removing the background color index and counts) and saving the background color
+    # to a new variable
+    count.pop(i)
+    background = num[i]
+    num.pop(i)
+
+    low = []
+    high = []
+
+    # getting the min and max value from the x co-coordinates value for each color pattern, this will help us to decide
+    # the output grid size
+    for val in num:
+        x, y = np.where(data == val)
+        low.append(min(x))
+        high.append(max(x))
+
+    # once we have those min and max list values, we can subtract and get the highest value, so that best value will
+    # contributing to output grid shape
+    best = 0
+    for x, y in list(zip(low, high)):
+        _temp = y - x
+        if _temp > best:
+            best = _temp
+
+    # as we have seen in the ARC, the logic says, we need to add 1 for the best grid
+    best += 1
+
+    # now most important : we are replacing the background color with 0 so that its easy to search and add the
+    # pattern later, when' will be able to find it
+    data = np.where(data == background, 0, data)
+
+    # This loop is most important one which consist of serveral task mentioned below:
+    # 1) As it loop , each color values from the main data
+    # 2) it tries to get the  x and y values for those color pattern from the "data" by doing the slicing concept
+    # 3) it explicitly replaces the extra color number if present in the extracted data that is temp_data_
+    # 4) we are checking for one condition, if the extracted shape is not of final grid shape which means it is a
+    # rectangle, so we are adding the pattern accordingly
+    #     if row is less than the best : we are adding the padding to left and right
+    #     if column is less then the best :  we are adding the padding to upper and lower
+    # 5) Appending those values to a list called as shape_area
+
+    shape_area = []
+    for val in num:
+        # for every unique value we are getting the x y values
+        x, y = np.where(data == val)
+
+        # extracting those values from the main data by using the slicing concept
+        temp_data_ = data[min(x): max(x) + 1, min(y): max(y) + 1]
+
+        # removing the extra color, if present which will replace it be the 0
+        temp_data_ = np.where(temp_data_ != val, 0, temp_data_)
+
+        # checking for the condition, if that shape is not equal to the best shape then that means that the extracted
+        # shape is rectangle, so for every rectangle or uneven shape this condition will get true
+        if temp_data_.shape != tuple((best, best)):
+
+            # checking for a type of rectangle, if row is less then this condition will be true
+            if temp_data_.shape[0] <= best and temp_data_.shape[1] == best:
+                # this will help us to get how much padding we have to do, which will be stored in q
+                # this will help us to add the data on the upper and lower side of adding to  a rectangle
+                q = np.zeros([(temp_data_.shape[1] - temp_data_.shape[0]) // 2, best])
+                # upper padding added
+                append_val = np.append(q, temp_data_)
+                # lower padding added
+                append_val = np.append(append_val, q)
+                # reshaping back to the required grid size
+                append_val = append_val.reshape(best, best)
+
+            # checking for a type of rectangle, if column is less then this condition will be true
+            if temp_data_.shape[0] == best and temp_data_.shape[1] <= best:
+                # this will help us to get how much padding we have to do, which will be stored in q
+                # this will help us to add the data on the left and right  side of adding to  a rectangle
+                q = np.zeros([best, (temp_data_.shape[0] - temp_data_.shape[1]) // 2])
+                # left padding added
+                append_val = np.append(q, temp_data_, axis=1)
+                # right padding added
+                append_val = np.append(append_val, q, axis=1)
+                # reshaping back to the required grid size
+                append_val = append_val.reshape(best, best)
+
+            shape_area.append(append_val)
+        else:
+            # if condition is false, we are directly adding those values
+            shape_area.append(temp_data_)
+
+    # adding extracted values to a grid of [best x best] which consist of  zeros
+    _temp_array = np.zeros([best, best])
+    for every_shape in shape_area:
+        _temp_array = np.add(_temp_array, every_shape)
+
+    # and once its all added up, we are finally replacing back to the background value
+    x = np.where(_temp_array == 0, background, _temp_array)
+
+    # returning the output grid
+    return x
+
+
+"""
+                                    TASK 2 :: 9f236235 :: Hard Level Difficulty 
+
+When we've looked in to the picture, it seems like :
+1) We need to create the output grid of size , where we need to find the color block size and loop for that size in the 
+    whole dataset which will help us to create the final grid output  
+2) We need to find the best block size for color pattern which is inscribed in the horizontal and vertical lines 
+3) Lets suppose, we got the best size of the color pattern, we will loop over each datapoint with the window size of 
+   the best values.
+4) For every iteration, we will capture the color pallet 
+5) From collected color pallet, will draw a 2nd last matrix 
+6) And finally, we will flip the the matrix which will be our output grid 
+ 
+                                **********************************************
+                                *        Training Grids solved : All         *
+                                *         Testing Grids solved : All         *
+                                **********************************************
+"""
+
+
+def solve_9f236235(data):
+    """
+        This function will do all the required calculation which we have just explained above
+
+        @param data : input numpy array grid values
+        return : output grid with the correct values
+    """
+    # getting the initial color values
+    val_0_0 = data[0][0]
+
+    best_grid = None
+    # we will iterate over every data from 1 to row size + 1 ; we are doing this because we are multiply the values in
+    # the given logic below
+    for i in range(1, data.shape[0] + 1):
+        # creating the 2D array for the value of val_0_0 for every number of i
+        temp_grid = np.array([[val_0_0] * i] * i)
+
+        # getting the actual data for the given i from the data
+        data_grid = data[:i, :i]
+
+        # checking, if the 2D array is equal or not, if true, it will assign the best value which is nothing but the
+        # shape value
+        if np.array_equal(temp_grid, data_grid):
+            best_grid = tuple((i, i))
+
+    val = []
+    # as we know the best grid value, so we will iterate over data for the given value of best ie will will
+    # search for best x best in the loop
+
+    # the first for loop will [best x best] will look in the x axis with counter step of 1 as we have the horizontal
+    # lines
+    for x in range(1, data.shape[0] + 1, best_grid[0] + 1):
+        _temp = []
+
+        # the second for loop will [best x best] will look in the y axis with counter step of 1 as we have
+        # the vertical lines
+
+        for y in range(1, data.shape[0] + 1, best_grid[0] + 1):
+            # extracting the color pattern for the best values
+            _temp_val = data[x:x + best_grid[0] - 1, y: y + best_grid[1] - 1]
+            # extracting the color from the pattern and storing it in the list
+            _temp.append(_temp_val[0][0])
+
+        # storing all the values of y in the val list
+        val.append(_temp)
+
+    # converting it to the numpy array
+    val = np.array(val)
+
+    # flipping that array at the column level
+    x = np.flip(val, 1)
+
+    # returning the final flipped value as a output
+    return x
+
+
 '''
 
-###### Task 3 : 0dfd9992 ######
-
-Difficulty : Difficult
+                                    Task 3 :: 0dfd9992 :: Hard Difficulty
 
 After analyzing the task from ARC testing interface, it can be seen that a single row or a single column pattern 
 occurs multiple times through out the grid. We read that pattern as a string and store it into a pattern list. 
@@ -42,8 +256,10 @@ a row/column, we skip over it as it needs to be filled.
 Once all the patterns are identified, we use REGEX to search and fill the patterns for row/columns containing blanks 
 using the pattern list. This is carried out in 'get_pattern_0dfd9992' function.
 
-Training Grids solved : All
-Testing Grids solved : All
+                                **********************************************
+                                *        Training Grids solved : All         *
+                                *         Testing Grids solved : All         *
+                                **********************************************
 
 '''
 
@@ -51,13 +267,21 @@ Testing Grids solved : All
 pattern = []
 
 
-# Inserting the patterns identified in rows or columns
 def insert_pattern_0dfd9992(a):
+    """
+        Inserts the patterns identified in rows or columns
+        I/P : Pattern String
+        O/P : None (Pattern appended in list)
+    """
     pattern.append(a)
 
 
-# When looping over missing values, call this to match the required pattern
 def get_pattern_0dfd9992(a):
+    """
+        When looping over missing values, call this to match the required pattern
+        I/P : Pattern String
+        O/P : Matched pattern with filled values
+    """
     # Loop over all the existing patterns
     for val in pattern:
         matching = re.search(a, val)  # re.search will find a pattern for missing values (dots)
@@ -66,9 +290,13 @@ def get_pattern_0dfd9992(a):
     return a  # In case, pattern is not found in existing list of patterns,
     # it will return the original row and the test/ training case will fail
 
-# Scan the patterns from rows and columns
-def scan_pattern_0dfd9992(x_sol):
 
+def scan_pattern_0dfd9992(x_sol):
+    """
+        Scans the patterns from rows and columns. Inserts into pattern list if pattern is identified.
+        I/P : Solution grid
+        O/P : None
+    """
     row, col = x_sol.shape  # getting dimensions of the grid
 
     for i in range(row):
@@ -88,8 +316,13 @@ def scan_pattern_0dfd9992(x_sol):
         if not blank:
             insert_pattern_0dfd9992(p)
 
-# Solving 0dfd9992
+
 def solve_0dfd9992(x):
+    """
+       Main function to solve the task. Explanation same as in description
+       I/P : Problem grid (2D Numpy array)
+       O/P : Solved grid with required values
+    """
     # Creating a copy of input grid to work on it
     sol = x.copy()
     # Creating a transpose grid to work on columns
@@ -130,9 +363,8 @@ def solve_0dfd9992(x):
 
 '''
 
-###### Task 4 : ded97339 ######
+                                Task 4 :: ded97339 :: Medium to Hard Difficulty
 
-Difficulty : Medium to Difficult
 
 This problem contains individual blocks of blue color in black grids. Task is to join those blocks 
 which occur in either same row or same column. We have used Numpy to achieve the result. 
@@ -143,13 +375,20 @@ in the solution grid for the same indices. This task is performed in 'insert_pat
 
 The same is done for transposed grid to fill out all the column patterns.
 
-Training Grids solved : All
-Testing Grids solved : All
+                                **********************************************
+                                *        Training Grids solved : All         *
+                                *         Testing Grids solved : All         *
+                                **********************************************
 
 '''
 
-# Inserting blue blocks in solution grid
+
 def insert_pattern_ded97339(inp_grid, sol_grid):
+    """
+        Updates the solution grid. Inserts blue blocks in the required positions in solution grid.
+        I/P : problem grid and solution grid (initially just the copy of problem grid)
+        O/P : None
+    """
     # Iterating on input and solution rows
     for i_row, s_row in zip(inp_grid, sol_grid):
         # Getting rows where blue color occurs twice
@@ -160,8 +399,14 @@ def insert_pattern_ded97339(inp_grid, sol_grid):
             # Updating the 'solution grid' always
             s_row[start:end] = 8
 
-# Solving ded97339
+
 def solve_ded97339(x):
+    """
+       Main function to solve the task. Explanation same as in description
+       I/P : Problem grid (2D Numpy array)
+       O/P : Solved grid with required values
+    """
+
     # Creating a copy of input grid to work on it
     sol = x.copy()
     # Creating a transpose of input grid to work on columns
