@@ -15,12 +15,12 @@ import re
 Difficulty : Hard
 ToDo: Add Comments and summary
 '''
+
 pattern = []
-def insert_pattern(a):
-    #print('Appending a ', a)
+def insert_pattern_0dfd9992(a):
     pattern.append(a)
 
-def get_pattern(a):
+def get_pattern_0dfd9992(a):
     for val in pattern :
         matching = re.search(a,val)
         if matching:
@@ -46,7 +46,7 @@ def solve_0dfd9992(x):
         if blank:
             continue
         else:
-            insert_pattern(p)
+            insert_pattern_0dfd9992(p)
             
     # Column wise scanning
     for i in range(row):
@@ -61,7 +61,7 @@ def solve_0dfd9992(x):
         if blank:
             continue
         else:
-            insert_pattern(p)
+            insert_pattern_0dfd9992(p)
 
     #Filling out missing part
     for i in range(row):
@@ -74,41 +74,28 @@ def solve_0dfd9992(x):
                 continue
             p += str(x_sol[i][j]) + ' '
         if blank:
-            received_pattern = get_pattern(p).split(' ')[0:-1]
-            #print(received_pattern)
+            received_pattern = get_pattern_0dfd9992(p).split(' ')[0:-1]
             x_sol[i] = received_pattern
-    return x_sol
-
-'''
-
-Difficulty : Easy
-ToDo : Replace if done 2nd Hard problem, Add comments and summary otherwise
-
-'''
-def sol_0d3d703e(x):
-    x_sol = x.copy()
-    color_map = {3: 4, 1: 5, 2: 6, 8: 9, 4: 3, 5: 1, 6: 2, 9: 8}
-    for k, v in color_map.items():
-        x_sol = np.where(x == k, v, x_sol)
-
-'''
-
-Difficulty : Hard
-ToDo : Try solving
-
-def solve_508bd3b6(x):
-
-    x_sol = x.copy()
-    rows, cols = np.where(x == 8)
-    zipped = list(zip(rows, cols))
-    blue_x1, blue_y1 = zipped[0]
-    blue_x2, blue_y2 = zipped[1]
-
-    print(zipped)
 
     return x_sol
-    
-'''
+
+
+def insert_pattern_ded97339(inp_matrix, sol_matrix):
+    for i_row, s_row in zip(inp_matrix, sol_matrix):
+        if np.count_nonzero(i_row) == 2:
+            start, end = np.where(i_row == 8)[0]
+            s_row[start:end] = 8
+
+def solve_ded97339(x):
+
+    sol = x.copy()
+    x_transpose = np.transpose(x)
+    sol_transpose = np.transpose(sol)
+
+    insert_pattern_ded97339(x, sol)
+    insert_pattern_ded97339(x_transpose, sol_transpose)
+
+    return sol
 
 
 
@@ -164,11 +151,11 @@ def test(taskID, solve, data):
     for x, y in zip(train_input, train_output):
         yhat = solve(x)
         show_result(x, y, yhat)
-        #break
-    # print("Test grids")
-    # for x, y in zip(test_input, test_output):
-    #     yhat = solve(x)
-    #     show_result(x, y, yhat)
+        # break
+    print("Test grids")
+    for x, y in zip(test_input, test_output):
+        yhat = solve(x)
+        show_result(x, y, yhat)
 
         
 def show_result(x, y, yhat):
